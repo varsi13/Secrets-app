@@ -52,12 +52,9 @@ passport.deserializeUser(function(user, cb) {
     });
 }); 
 
-CLIENT_ID = "834489080339-g3jikfi3v6f1kusbirnapb5903lpfh2o.apps.googleusercontent.com";
-CLIENT_SECRET = "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";
-
 passport.use(new GoogleStrategy({
-    clientID: CLIENT_ID,
-    clientSecret: CLIENT_SECRET,
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
     callbackURL: "http://localhost:3000/auth/google/secrets"
 },
 function(accessToken, refreshToken, profile, cb) {
@@ -90,7 +87,6 @@ app.get("/register", function(req, res) {
 
 app.get("/secrets", function(req, res) {
     User.find({"secret" : {$ne: null}}).then((foundUsers) => {
-        console.log("add", foundUsers);
         if (foundUsers) {
             res.render("secrets", {usersWithSecrets : foundUsers});
         }
@@ -109,7 +105,6 @@ app.get("/submit", function(req, res){
 
 app.post("/submit", function(req, res) {
     const submittedSecret = req.body.secret;
-    console.log(req.user.id);
 
     User.findById(req.user.id).then((foundUser) => {
         if(foundUser) {
